@@ -45,7 +45,7 @@ const char* fragmentShaderSource =
 "}\n";
 
 
-void BrowserBackend::init() {
+void BrowserBackend::initialize_context() {
     EmscriptenWebGLContextAttributes attr;
     emscripten_webgl_init_context_attributes(&attr);
 
@@ -65,6 +65,10 @@ void BrowserBackend::init() {
     }
 
     emscripten_webgl_make_context_current(ctx);
+}
+
+
+void BrowserBackend::init() {
 
     // Compile vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);

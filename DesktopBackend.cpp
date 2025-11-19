@@ -39,8 +39,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void DesktopBackend::init() {
-    // Initialize GLFW
+void DesktopBackend::initialize_context() {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return ;
@@ -65,9 +64,14 @@ void DesktopBackend::init() {
         std::cerr << "Failed to initialize GLAD\n";
         return ;
     }
+}
+
+
+void DesktopBackend::init() {
+    // Initialize GLFW
 
     // Build and compile shader program
-    int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
     glCompileShader(vertexShader);
     int success;
@@ -78,7 +82,7 @@ void DesktopBackend::init() {
         std::cerr << "Vertex Shader Compilation Failed:\n" << infoLog << "\n";
     }
 
-    int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
     glCompileShader(fragmentShader);
 

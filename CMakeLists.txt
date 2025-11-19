@@ -9,7 +9,8 @@ option(BROWSER_BUILD "Building for browser or not" OFF)
 
 set(SOURCES
     main.cpp
-    IBackend.h
+    Backend.h
+        Backend.cpp
 )
 
 
@@ -73,4 +74,12 @@ if(BROWSER_BUILD)
         "-sALLOW_MEMORY_GROWTH=1"
         "-sASSERTIONS=1"
     )
+    add_custom_target(run_browser
+        DEPENDS ${EXE_FILE}
+    )
+else()
+    add_custom_target(default
+        DEPENDS ${EXE_FILE}
+    )
+
 endif()

@@ -3,11 +3,12 @@
 //
 
 #pragma once
-#include "IBackend.h"
+#include "Backend.h"
 
 
-class DesktopBackend: public IBackend {
+class DesktopBackend: public Backend {
 public:
+    void initialize_context() override;
     void init() override;
     void do_main_loop() override;
     void cleanup() override;
