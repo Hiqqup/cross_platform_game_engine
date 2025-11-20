@@ -15,7 +15,8 @@ public:
     virtual GLuint loadAndCompileShader(GLuint shaderType, const std::filesystem::path &shaderPath);
 
     GLuint shaderProgram;
-    GLuint VAO, VBO;
+    GLuint texture;
+    GLuint VAO, VBO, EBO;
     virtual void initialize_context() = 0;
     virtual void init() ;
     virtual void render();

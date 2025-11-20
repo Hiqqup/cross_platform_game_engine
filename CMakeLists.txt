@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 4.0)
-project(hello_triangle_cross_platform)
+project(cross_platform_game_engine)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(EXE_FILE hello_triangle_cross_platform )
+set(EXE_FILE cross_platform_game_engine)
 
 option(BROWSER_BUILD "Building for browser or not" OFF)
 
@@ -54,10 +54,23 @@ else()
     )
     FetchContent_MakeAvailable(glfw)
 
+    FetchContent_Declare(
+        stb
+        GIT_REPOSITORY https://github.com/nothings/stb.git
+        GIT_TAG master
+    )
+
+    FetchContent_GetProperties(stb)
+    if (NOT stb_POPULATED)
+        FetchContent_MakeAvailable(stb)
+        add_library(stb INTERFACE)
+        target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
+    endif()
 
     list(APPEND DEPENDENCIES
         glad
         glfw
+        stb
     )
 endif()
 
@@ -91,18 +104,7 @@ endif()
 target_compile_definitions(${EXE_FILE} PRIVATE ASSET_ROOT=./assets/)
 
 
-set(ASSETS
-    ${CMAKE_SOURCE_DIR}/assets/shader.vert
-    ${CMAKE_SOURCE_DIR}/assets/shader.frag
-)
 
-add_custom_target(copy_assets
-    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${EXE_FILE}>/assets
-    COMMAND ${CMAKE_COMMAND} -E copy ${ASSETS} $<TARGET_FILE_DIR:${EXE_FILE}>/assets
-    DEPENDS ${ASSETS}
-)
+add_custom_target(copy_assets COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${EXE_FILE}>/assets )
 add_dependencies(${EXE_FILE} copy_assets)
 
-#add_custom_command(TARGET ${EXE_FILE} PRE_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${EXE_FILE}>/assets)
