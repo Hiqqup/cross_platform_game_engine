@@ -10,11 +10,13 @@ option(BROWSER_BUILD "Building for browser or not" OFF)
 #sources
 set(SOURCES
     main.cpp
-        platform/Platform.h
-        platform/Platform.cpp
+    platform/Platform.h
+    platform/Platform.cpp
     gl_backend.h
     Image.cpp
     Image.h
+    Shader.cpp
+    Shader.h
 )
 
 

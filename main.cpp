@@ -1,70 +1,20 @@
-#include <fstream>
-#include <iostream>
-#include <sstream>
 
 #include "platform/browser/PlatformBrowser.h"
 #include "platform/desktop/PlatformDesktop.h"
 #include "Image.h"
+#include "Shader.h"
 
 Platform* global_backend = nullptr;
 
-std::string readText(const std::filesystem::path &filePath) {
-    std::ifstream sourceFile(global_backend->resolveAssetPath(filePath));
-    if (!sourceFile.is_open()) {
-        std::cerr << "Error opening file: " << filePath << std::endl;
-    }
-    std::stringstream buffer;
-    buffer << sourceFile.rdbuf();
-    return buffer.str();
-}
-
-void handle_shader_compilation_error(const GLuint shaderID) {
-    GLint success = 0;
-    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
-
-    if (!success) {
-        GLint logLength = 0;
-        glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &logLength);
-
-        std::string infoLog;
-        infoLog.resize(logLength);
-
-        glGetShaderInfoLog(shaderID, logLength, nullptr, infoLog.data());
-
-        // Clean up the failed shader
-        glDeleteShader(shaderID);
-
-        // You can throw, log, or return 0 depending on your design.
-        throw std::runtime_error(
-            "Shader compile error:\n" + infoLog
-        );
-    }
-}
- GLuint loadAndCompileShader(GLuint shaderType, const std::filesystem::path &shaderPath) {
-     auto shaderSource = readText(shaderPath);
-     auto source = shaderSource.c_str();
-     auto shaderID = glCreateShader(shaderType);
-     glShaderSource(shaderID, 1, &source, nullptr);
-     glCompileShader(shaderID);
-    handle_shader_compilation_error(shaderID);
-
-    return shaderID;
- }
 void do_game() {
-    GLuint shaderProgram;
+
+    Shader shader = Shader(
+        global_backend->resolveAssetPath("shader.vert"),
+        global_backend->resolveAssetPath("shader.frag")
+        );
     GLuint texture;
     GLuint VAO, VBO, EBO;
 
-    GLuint vertexShader = loadAndCompileShader(GL_VERTEX_SHADER, "shader.vert");
-    GLuint fragmentShader =loadAndCompileShader(GL_FRAGMENT_SHADER, "shader.frag");
-
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
 
     // Triangle vertex data
     float vertices[] = {
@@ -118,14 +68,15 @@ void do_game() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, i.width, i.height, 0, GL_RGB, GL_UNSIGNED_BYTE, i.data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), 0);
+
+    shader.passUniform("ourTexture", 0);
 
     global_backend->do_main_loop(
     [&]() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+        shader.use();
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -138,7 +89,6 @@ void do_game() {
     );
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
 
 }
 int main() {
