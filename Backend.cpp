@@ -10,8 +10,8 @@
 #include "Image.h"
 
 
-std::string Backend::readText(const std::filesystem::path &filePath) {
-    std::ifstream sourceFile(resolveAssetPath(filePath));
+std::string readText(const std::filesystem::path &filePath) {
+    std::ifstream sourceFile(global_backend->resolveAssetPath(filePath));
     if (!sourceFile.is_open()) {
         std::cerr << "Error opening file: " << filePath << std::endl;
     }
@@ -42,7 +42,7 @@ void handle_shader_compilation_error(const GLuint shaderID) {
         );
     }
 }
- GLuint Backend::loadAndCompileShader(GLuint shaderType, const std::filesystem::path &shaderPath) {
+ GLuint loadAndCompileShader(GLuint shaderType, const std::filesystem::path &shaderPath) {
      auto shaderSource = readText(shaderPath);
      auto source = shaderSource.c_str();
      auto shaderID = glCreateShader(shaderType);
@@ -55,9 +55,54 @@ void handle_shader_compilation_error(const GLuint shaderID) {
 
 
 
-void Backend::init() {
 
 
+
+
+void Backend::main_loop() {
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(shaderProgram);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}
+
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+        glViewport(0, 0, width, height);
+}
+
+void Backend::initialize_context() {
+    if (!glfwInit()) {
+        std::cerr << "Failed to initialize GLFW\n";
+        return ;
+    }
+
+    // Request an OpenGL ES 3.0 context
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+
+     window = glfwCreateWindow(800, 600, "Cross Platform Game Engine", nullptr, nullptr);
+    if (!window ) {
+        std::cerr << "Failed to create GLFW window\n";
+        glfwTerminate();
+        return ;
+    }
+
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+}
+
+void Backend::setup_main_loop_cleanup() {
     GLuint vertexShader = loadAndCompileShader(GL_VERTEX_SHADER, "shader.vert");
     GLuint fragmentShader =loadAndCompileShader(GL_FRAGMENT_SHADER, "shader.frag");
 
@@ -122,19 +167,14 @@ unsigned int indices[] = {  // note that we start from 0!
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), 0);
-}
 
 
+    do_main_loop( nullptr);
 
-void Backend::render() {
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteProgram(shaderProgram);
 
-        glUseProgram(shaderProgram);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }

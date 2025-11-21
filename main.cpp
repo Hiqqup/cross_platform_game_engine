@@ -1,19 +1,16 @@
 #include "BrowserBackend.h"
 #include "DesktopBackend.h"
-#include "Backend.h"
 
+Backend* global_backend = nullptr;
 int main() {
-    Backend* b;
-    #ifdef __EMSCRIPTEN__
-    BrowserBackend bb;
-    b= &bb;
-    #else
-    DesktopBackend db;
-    b = &db;
-    #endif
-    b->initialize_context();
-    b->init();
-    b->do_main_loop();
-    b->cleanup();
+#ifdef __EMSCRIPTEN__
+    BrowserBackend backend;
+#else
+    DesktopBackend backend;
+#endif
+    global_backend = &backend;
+
+    global_backend->initialize_context();
+    global_backend->setup_main_loop_cleanup();
     return 0;
 }

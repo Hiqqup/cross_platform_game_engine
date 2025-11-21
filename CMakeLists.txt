@@ -88,9 +88,11 @@ if(BROWSER_BUILD)
         "-sFULL_ES3=1"
         "-sALLOW_MEMORY_GROWTH=1"
         "-sASSERTIONS=1"
+        "-sUSE_GLFW=3"
     )
     target_link_options(${EXE_FILE} PRIVATE
         "-sUSE_WEBGL2=1"
+        "-sUSE_GLFW=3"
          "--preload-file"
          "${CMAKE_CURRENT_SOURCE_DIR}/assets/@/assets"
     )

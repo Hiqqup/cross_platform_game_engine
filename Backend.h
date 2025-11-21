@@ -5,25 +5,24 @@
 #pragma once
 #include "gl_backend.h"
 #include <filesystem>
-
-
-
-
+#include <GLFW/glfw3.h>
+#include <functional>
 
 class Backend {
 public:
 
 
-    virtual std::filesystem::path resolveAssetPath(const std::filesystem::path &relativeAssetPath) = 0 ;
-    virtual std::string readText(const std::filesystem::path &filePath);
-    virtual GLuint loadAndCompileShader(GLuint shaderType, const std::filesystem::path &shaderPath);
-
+    GLFWwindow* window ;
     GLuint shaderProgram;
     GLuint texture;
     GLuint VAO, VBO, EBO;
-    virtual void initialize_context() = 0;
-    virtual void init() ;
-    virtual void render();
-    virtual void do_main_loop() = 0;
-    virtual void cleanup() = 0;
+
+    virtual void main_loop();
+
+    virtual void initialize_context() ;
+    virtual void setup_main_loop_cleanup();
+    virtual void do_main_loop(const std::function<void()>& func) = 0;
+    virtual std::filesystem::path resolveAssetPath(const std::filesystem::path &relativeAssetPath) = 0 ;
+
 };
+extern Backend* global_backend;

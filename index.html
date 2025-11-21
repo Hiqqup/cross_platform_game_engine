@@ -6,11 +6,21 @@
   <title>Hello Triangle - WebGL2</title>
   <style>
     body, html { margin: 0; padding: 0; }
-    canvas { width: 100vw; height: 100vh; display: block; }
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas" ></canvas>
+
+  <script>
+    var Module = {
+      canvas: (function() {
+        return document.getElementById('canvas');
+      })(),
+      print: function(x) { console.log(x); },
+      printErr: function(x) { console.error(x); }
+    };
+  </script>
+
   <script src="cross_platform_game_engine.js"></script>
 </body>
 </html>
