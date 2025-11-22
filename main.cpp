@@ -64,8 +64,8 @@ void do_game() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
-    Image i = Image(global_backend->resolveAssetPath("container.jpg"));
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, i.width, i.height, 0, GL_RGB, GL_UNSIGNED_BYTE, i.data);
+    Image i = Image(global_backend->resolveAssetPath("texture.png"));
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, i.width, i.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, i.data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
 
