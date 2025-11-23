@@ -12,5 +12,6 @@ namespace cpge {
         virtual bool should_close() = 0;
         virtual void update() =0;
         [[nodiscard]] virtual glm::vec2 get_window_size() = 0;
+        virtual void set_cursor_disabled(bool value) = 0;
     };
 }

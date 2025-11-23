@@ -21,6 +21,8 @@ set(SOURCES
     platform/GlfwWindow.hpp
         Mesh.cpp
         Mesh.hpp
+        Camera.hpp
+        Camera.cpp
 )
 
 

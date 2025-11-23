@@ -5,5 +5,6 @@ out vec3 normal;
 uniform mat4 mvp;
 void main() {
     normal = aNormal;
-    gl_Position = vec4(aPos  , 1.0) * mvp;
+    gl_Position =mvp* vec4(aPos  , 1.0) ;
+
 }

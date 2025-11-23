@@ -17,6 +17,8 @@ public:
     bool should_close() override;
     void update() override;
     glm::vec2 get_window_size() override;
+    void set_cursor_disabled(bool value) override;
 private:
     GLFWwindow* window ;
+    friend class Camera;
 };

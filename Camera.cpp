@@ -1,0 +1,66 @@
+//
+// Created by ju on 10/31/25.
+//
+
+#include "Camera.hpp"
+
+#include "platform/GlfwWindow.hpp"
+
+glm::vec2 Camera::getMousePosition(GLFWwindow* window) {
+    double xPos, yPos;
+    glfwGetCursorPos(window, &xPos, &yPos);
+    return {xPos, yPos};
+}
+
+ glm::vec2 Camera::getDeltaMousePosition(GLFWwindow *window) {
+    if (firstMousePos) {
+        firstMousePos = false;
+        mousePosition = getMousePosition(window);
+        return {0,0};
+    }
+    auto newMousePosition = getMousePosition(window);
+    glm::vec2 deltaMousePosition = mousePosition - newMousePosition;
+    mousePosition = newMousePosition;
+    return deltaMousePosition;
+}
+bool cursor_enabled = true;
+void Camera::processInput( GlfwWindow& glfw_window) {
+  	GLFWwindow* window = glfw_window.window;
+   float cameraSpeed = 0.2f;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        cameraSpeed = 0.5f;
+    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+    	cursor_enabled = !cursor_enabled;
+    	glfw_window.set_cursor_disabled(cursor_enabled);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        position += glm::normalize(glm::vec3(front.x, 0, front.z) ) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        position -= glm::normalize(glm::vec3(front.x, 0, front.z) ) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        position -= glm::normalize(glm::cross(front, up)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        position += glm::normalize(glm::cross(front, up)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        position.y  += cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        position.y  -= cameraSpeed;
+
+    glm::vec2 mouseDelta = getDeltaMousePosition(window);
+    float sensitivity = 0.02f;
+    mouseDelta*= sensitivity;
+
+    yaw   -= mouseDelta.x;
+    pitch += mouseDelta.y;
+
+    if(pitch > 89.0f)
+        pitch = 89.0f;
+    if(pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 direction;
+    direction.x = static_cast<float>(cos(glm::radians(yaw)) * cos(glm::radians(pitch)));
+    direction.y = static_cast<float>(sin(glm::radians(pitch)));
+    direction.z = static_cast<float>(sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
+    front = glm::normalize(direction);
+
+}

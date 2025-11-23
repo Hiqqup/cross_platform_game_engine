@@ -20,7 +20,8 @@ GlfwWindow::GlfwWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-     window = glfwCreateWindow(800, 600, "Cross Platform Game Engine", nullptr, nullptr);
+
+     window = glfwCreateWindow(1900, 1000, "Cross Platform Game Engine", nullptr, nullptr);
     if (!window ) {
         std::cerr << "Failed to create GLFW window\n";
         glfwTerminate();
@@ -49,4 +50,8 @@ glm::vec2 GlfwWindow::get_window_size() {
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
 	return glm::vec2(width, height);
+}
+
+void GlfwWindow::set_cursor_disabled(bool value) {
+    glfwSetInputMode(window, GLFW_CURSOR, value? GLFW_CURSOR_NORMAL:GLFW_CURSOR_DISABLED);
 }
