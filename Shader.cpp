@@ -2,8 +2,8 @@
 // Created by ju on 11/21/25.
 //
 
-#include "Shader.h"
-#include "platform/Platform.h"
+#include "Shader.hpp"
+#include "platform/Platform.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>

@@ -1,19 +1,15 @@
 //
-// Created by ju on 11/19/25.
+// Created by ju on 11/23/25.
 //
-#include "Platform.h"
 
-#include <fstream>
+#include "GlfwWindow.hpp"
 #include <iostream>
-
-
-
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
         glViewport(0, 0, width, height);
 }
 
-Context::Context() {
+GlfwWindow::GlfwWindow() {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return ;
@@ -36,7 +32,16 @@ Context::Context() {
 }
 
 
-Context::~Context() {
+GlfwWindow::~GlfwWindow() {
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+bool GlfwWindow::should_close() {
+    return glfwWindowShouldClose(window);
+}
+
+void GlfwWindow::update() {
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 }

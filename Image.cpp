@@ -2,7 +2,7 @@
 // Created by ju on 11/20/25.
 //
 
-#include "Image.h"
+#include "Image.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include <iostream>
 #include <stb_image.h>

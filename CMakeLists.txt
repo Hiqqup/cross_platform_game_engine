@@ -10,13 +10,15 @@ option(BROWSER_BUILD "Building for browser or not" OFF)
 #sources
 set(SOURCES
     main.cpp
-    platform/Platform.h
-    platform/Platform.cpp
-    gl_backend.h
+    platform/Platform.hpp
+    gl_backend.hpp
     Image.cpp
-    Image.h
+    Image.hpp
     Shader.cpp
-    Shader.h
+    Shader.hpp
+    platform/Window.hpp
+    platform/GlfwWindow.cpp
+    platform/GlfwWindow.hpp
 )
 
 
@@ -43,7 +45,7 @@ if(BROWSER_BUILD)
     #sources
     list(APPEND SOURCES
             platform/browser/PlatformBrowser.cpp
-            platform/browser/PlatformBrowser.h
+            platform/browser/PlatformBrowser.hpp
     )
     set(CMAKE_EXECUTABLE_SUFFIX ".js")
     configure_file(${CMAKE_SOURCE_DIR}/platform/browser/index.html ${CMAKE_BINARY_DIR}/index.html COPYONLY)
@@ -55,7 +57,7 @@ else()
     #sources
     list(APPEND SOURCES
             platform/desktop/PlatformDesktop.cpp
-            platform/desktop/PlatformDesktop.h
+            platform/desktop/PlatformDesktop.hpp
     )
     # Dependencies
     FetchContent_Declare(

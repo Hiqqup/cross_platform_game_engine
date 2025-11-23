@@ -2,7 +2,7 @@
 // Created by ju on 11/19/25.
 //
 
-#include "PlatformDesktop.h"
+#include "PlatformDesktop.hpp"
 #include <iostream>
 
 
@@ -14,7 +14,7 @@ std::filesystem::path PlatformDesktop::resolveAssetPath(const std::filesystem::p
 
 
 void PlatformDesktop::do_main_loop(const std::function<void()>& func) {
-    while(!glfwWindowShouldClose(global_backend->context.window)) {
+    while(!global_backend->window->should_close()) {
         func();
     }
 }

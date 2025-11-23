@@ -3,12 +3,11 @@
 //
 
 #pragma once
-#include "../Platform.h"
+#include "../Platform.hpp"
 
 
-class PlatformDesktop final : public Platform {
+class PlatformBrowser final: public Platform {
 public:
-    PlatformDesktop();
-    void do_main_loop(const std::function<void()> &func) override;
+    void do_main_loop(const std::function<void()> &callback) override;
     std::filesystem::path resolveAssetPath(const std::filesystem::path &relativeAssetPath) override;
 };

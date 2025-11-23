@@ -1,8 +1,8 @@
 
-#include "platform/browser/PlatformBrowser.h"
-#include "platform/desktop/PlatformDesktop.h"
-#include "Image.h"
-#include "Shader.h"
+#include "platform/browser/PlatformBrowser.hpp"
+#include "platform/desktop/PlatformDesktop.hpp"
+#include "Image.hpp"
+#include "Shader.hpp"
 
 Platform* global_backend = nullptr;
 
@@ -83,8 +83,7 @@ void do_game() {
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-        glfwSwapBuffers(global_backend->context.window);
-        glfwPollEvents();
+        global_backend->window->update();
     }
     );
     glDeleteVertexArrays(1, &VAO);

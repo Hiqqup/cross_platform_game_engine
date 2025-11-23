@@ -3,21 +3,14 @@
 //
 
 #pragma once
+#include "GlfwWindow.hpp"
 #include <filesystem>
-// ReSharper disable once CppUnusedIncludeDirective
-#include "../gl_backend.h"
-#include <GLFW/glfw3.h>
 #include <functional>
 
-class Context {
-    public:
-        GLFWwindow* window ;
-        Context();
-        ~Context();
-    };
 class Platform {
+    GlfwWindow glfw_window;
 public:
-    Context context;
+    cpge::Window* window = &glfw_window;
     virtual ~Platform() = default;
     virtual void do_main_loop(const std::function<void()>& callback) = 0;
     virtual std::filesystem::path resolveAssetPath(const std::filesystem::path &relativeAssetPath) = 0 ;

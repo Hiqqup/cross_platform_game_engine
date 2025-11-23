@@ -2,7 +2,7 @@
 // Created by ju on 11/19/25.
 //
 
-#include "PlatformBrowser.h"
+#include "PlatformBrowser.hpp"
 #include <emscripten/emscripten.h>
 
 
