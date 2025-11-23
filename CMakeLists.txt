@@ -19,7 +19,10 @@ set(SOURCES
     platform/Window.hpp
     platform/GlfwWindow.cpp
     platform/GlfwWindow.hpp
+        Mesh.cpp
+        Mesh.hpp
 )
+
 
 
 #dependencies
@@ -36,8 +39,30 @@ if (NOT stb_POPULATED)
     target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
 endif()
 
+FetchContent_Declare(
+    tinygltf
+    GIT_REPOSITORY https://github.com/syoyo/tinygltf
+    GIT_TAG release
+)
+FetchContent_MakeAvailable(tinygltf)
+
+add_library(tinygltf_external_stb_image INTERFACE)
+target_include_directories(tinygltf_external_stb_image INTERFACE ${tinygltf_SOURCE_DIR} ${stb_SOURCE_DIR})
+target_compile_definitions(tinygltf_external_stb_image INTERFACE TINYGLTF_NO_INCLUDE_STB_IMAGE TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE)
+
+
+FetchContent_Declare(
+    glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    GIT_TAG master
+)
+FetchContent_MakeAvailable(glm)
+
+
 set(DEPENDENCIES
     stb
+    tinygltf_external_stb_image
+    glm
 )
 
 
@@ -80,8 +105,19 @@ else()
     )
 endif()
 
+
+
+
+
 add_executable(${EXE_FILE} ${SOURCES} )
 target_link_libraries(${EXE_FILE} PRIVATE ${DEPENDENCIES})
+
+target_compile_definitions(${EXE_FILE} PRIVATE
+        #STB_IMAGE_IMPLEMENTATION
+        #STB_IMAGE_WRITE_IMPLEMENTATION
+        #TINYGLTF_IMPLEMENTATION
+)
+
 
 if(BROWSER_BUILD)
     # linker flags

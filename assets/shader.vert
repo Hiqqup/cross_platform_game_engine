@@ -1,11 +1,9 @@
 #version 300 es
 layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aColor;
-layout(location = 2) in vec2 aTexCoord;
-out vec3 vertexColor;
-out vec2 TexCoord;
+layout(location = 1) in vec3 aNormal;
+out vec3 normal;
+uniform mat4 mvp;
 void main() {
-    gl_Position = vec4(aPos + vec3(0.,0.,0.), 1.0);
-    vertexColor = aColor;
-   TexCoord = aTexCoord;
+    normal = aNormal;
+    gl_Position = vec4(aPos  , 1.0) * mvp;
 }

@@ -3,8 +3,8 @@
 //
 
 #include "Image.hpp"
-#define STB_IMAGE_IMPLEMENTATION
 #include <iostream>
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 Image::Image(const std::filesystem::path &full_image_path) {

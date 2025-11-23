@@ -7,7 +7,7 @@
 
 
 
-std::filesystem::path PlatformBrowser::resolveAssetPath(const std::filesystem::path &relativeAssetPath) {
+std::filesystem::path PlatformBrowser::resolve_asset_path(const std::filesystem::path &relativeAssetPath) {
     return std::filesystem::path("/assets") / relativeAssetPath;
 }
 

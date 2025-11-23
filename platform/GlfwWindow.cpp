@@ -45,3 +45,8 @@ void GlfwWindow::update() {
     glfwSwapBuffers(window);
     glfwPollEvents();
 }
+glm::vec2 GlfwWindow::get_window_size() {
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+	return glm::vec2(width, height);
+}

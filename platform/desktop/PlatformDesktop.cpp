@@ -6,7 +6,7 @@
 #include <iostream>
 
 
-std::filesystem::path PlatformDesktop::resolveAssetPath(const std::filesystem::path &relativeAssetPath) {
+std::filesystem::path PlatformDesktop::resolve_asset_path(const std::filesystem::path &relativeAssetPath) {
     auto mergedPath = ("./assets" / relativeAssetPath).make_preferred();
     return std::filesystem::canonical(mergedPath);
 }

@@ -16,6 +16,7 @@ public:
     ~GlfwWindow() ;
     bool should_close() override;
     void update() override;
+    glm::vec2 get_window_size() override;
 private:
     GLFWwindow* window ;
 };

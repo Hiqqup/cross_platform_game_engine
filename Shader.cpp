@@ -5,6 +5,7 @@
 #include "Shader.hpp"
 #include "platform/Platform.hpp"
 #include <fstream>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 
@@ -50,17 +51,17 @@ void handle_shader_compilation_error(const GLuint shaderID) {
  }
 
 void Shader::use() {
-    glUseProgram(shaderProgram);
+    glUseProgram(shader_program);
 }
 
 Shader::Shader(const std::filesystem::path &full_vertex_path, const std::filesystem::path &full_fragment_path) {
     GLuint vertexShader = loadAndCompileShader(GL_VERTEX_SHADER, full_vertex_path);
     GLuint fragmentShader =loadAndCompileShader(GL_FRAGMENT_SHADER, full_fragment_path);
 
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    shader_program = glCreateProgram();
+    glAttachShader(shader_program, vertexShader);
+    glAttachShader(shader_program, fragmentShader);
+    glLinkProgram(shader_program);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -68,9 +69,12 @@ Shader::Shader(const std::filesystem::path &full_vertex_path, const std::filesys
 
 
 Shader::~Shader() {
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(shader_program);
 }
 
-void Shader::passUniform(const std::string &uniform_name, int value) {
-    glUniform1i(glGetUniformLocation(shaderProgram, uniform_name.c_str()), value);
+void Shader::pass_uniform(const std::string &uniform_name, int value) {
+    glUniform1i(glGetUniformLocation(shader_program, uniform_name.c_str()), value);
+}
+void Shader::pass_uniform(const std::string &uniform_name, const glm::mat4& value) {
+    glUniformMatrix4fv(glGetUniformLocation(shader_program, uniform_name.c_str()), 1, GL_FALSE,glm::value_ptr(value));
 }

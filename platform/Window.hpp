@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include <glm/vec2.hpp>
 
 namespace cpge {
     class Window  {
@@ -11,5 +11,6 @@ namespace cpge {
         virtual ~Window() = default;
         virtual bool should_close() = 0;
         virtual void update() =0;
+        [[nodiscard]] virtual glm::vec2 get_window_size() = 0;
     };
 }

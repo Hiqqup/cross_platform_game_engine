@@ -3,91 +3,52 @@
 #include "platform/desktop/PlatformDesktop.hpp"
 #include "Image.hpp"
 #include "Shader.hpp"
+#include "Mesh.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 Platform* global_backend = nullptr;
 
+glm::mat4 calculateMvpMatrix() {
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f));
+    model = glm::scale(model, glm::vec3(1.0f));
+    model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+
+    const glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
+    const glm::vec3 up    = glm::vec3(0.0f, 1.0f,  0.0f);
+    const glm::vec3 position = glm::vec3(0.0f, 40.0f,  3.0f);;
+	const auto window_size  = global_backend->window->get_window_size();
+
+    glm::mat4 view =  glm::lookAt(position, position + front, up);
+    glm::mat4 projection = glm::perspective(glm::radians(30.0f),
+        window_size.x/ window_size.y, 0.1f, 100.0f);
+
+    return projection * view * model;
+}
 void do_game() {
 
     Shader shader = Shader(
-        global_backend->resolveAssetPath("shader.vert"),
-        global_backend->resolveAssetPath("shader.frag")
+        global_backend->resolve_asset_path("shader.vert"),
+        global_backend->resolve_asset_path("shader.frag")
         );
-    GLuint texture;
-    GLuint VAO, VBO, EBO;
 
-
-    // Triangle vertex data
-    float vertices[] = {
-        // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
-    };
-
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-    };
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // Position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)nullptr);
-    glEnableVertexAttribArray(0);
-
-    // Color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    glBindVertexArray(0);
-
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
-    Image i = Image(global_backend->resolveAssetPath("texture.png"));
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, i.width, i.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, i.data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-
-    shader.passUniform("ourTexture", 0);
+	Mesh mesh = Mesh("monkey.glb" );
+	glEnable(GL_DEPTH_TEST);
 
     global_backend->do_main_loop(
     [&]() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    	auto mvp = calculateMvpMatrix();
+    	//shader.pass_uniform("mvp", mvp);
         shader.use();
+		mesh.draw();
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         global_backend->window->update();
     }
     );
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
 
 }
 int main() {
