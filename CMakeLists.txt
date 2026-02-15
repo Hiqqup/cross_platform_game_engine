@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 4.0)
-project(cross_platform_game_engine)
+cmake_minimum_required(VERSION 3.2)
+project(cross_platform_game_engine LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -149,6 +149,12 @@ else()
 endif()
 
 # asset copying
-add_custom_target(copy_assets COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${EXE_FILE}>/assets )
-add_dependencies(${EXE_FILE} copy_assets)
+#add_custom_target(copy_assets COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${EXE_FILE}>/assets )
+#add_dependencies(${EXE_FILE} copy_assets)
+
+add_custom_command(TARGET ${EXE_FILE} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        $<TARGET_FILE_DIR:${EXE_FILE}>/assets
+)
 

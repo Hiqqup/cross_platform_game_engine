@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include <glad/glad.h>
+#include "gl_backend.hpp"
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
